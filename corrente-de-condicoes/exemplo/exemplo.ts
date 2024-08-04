@@ -37,7 +37,9 @@ routes.use(
         if (name) {
             if (name === "bob")
                 throw new CustomError("I dont like you bob", "E6214");
-            if (/^[\x00-\x7F]*$/.test(name)) {
+            //@ts-expect-error unknown error
+            if (name === "foo") doSomething(name);
+            if (!/^[\x00-\x7F]*$/.test(name)) {
                 throw new CustomError("Invalid character", "E7512");
             }
             res.status(200).send(`Hello ${name}`);

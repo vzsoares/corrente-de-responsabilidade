@@ -14,6 +14,8 @@ Raise error:
     > property of undefined
 -   curl -i -X GET "http://localhost:3000/hello?name=Foo&age=42"
     > zod strict error
+-   curl -i -X POST "http://localhost:3000/hello?name=foo"
+    > unknown error
 -   curl -i -X GET "http://localhost:3000/hello?name=bob"
     > bob is blacklisted
 
