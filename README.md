@@ -16,3 +16,8 @@ Raise error:
     > zod strict error
 -   curl -i -X GET "http://localhost:3000/hello?name=bob"
     > bob is blacklisted
+
+refs:
+
+-   https://refactoring.guru/design-patterns/chain-of-responsibility
+-   https://github.com/RefactoringGuru/design-patterns-typescript/blob/main/src/ChainOfResponsibility/RealWorld/index.ts
