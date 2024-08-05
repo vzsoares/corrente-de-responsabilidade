@@ -2,6 +2,9 @@
 
 Implementando padrão corrente de responsabilidade ná prática
 
+![imagem](./static/corrente_humana_b.jpg)
+<!-- image src https://www.fnweb.de/orte/buchen_artikel,-buchen-eimerkette-und-historische-loeschuebung-_arid,1099453.html?&npg -->
+
 Palavras Chaves:
 
 -   Sequencial
