@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { CustomError } from "../baseApp";
 
 interface Handler {
     setNext(handler: Handler): Handler;
@@ -10,19 +11,6 @@ export interface ErrorData {
     message: string;
     error: unknown;
     code: string;
-}
-
-export class CustomError extends Error {
-    message: string;
-    code: string;
-    constructor(
-        message = "Something wrong happened ):",
-        code: string = "U500E",
-    ) {
-        super(message);
-        this.message = message;
-        this.code = code;
-    }
 }
 
 abstract class AbstractHandler implements Handler {

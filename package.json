@@ -6,6 +6,8 @@
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
         "debug": "DEBUG=express:* tsx watch",
+        "debug-condicoes-ex": "DEBUG=express:* tsx watch ./corrente-de-condicoes/exemplo/index.ts",
+        "debug-condicoes-imp": "DEBUG=express:* tsx watch ./corrente-de-condicoes/implementacacao/index.ts",
         "start": "tsx watch",
         "invoke": "curl -i -X GET 'http://localhost:3000/hello'"
     },
