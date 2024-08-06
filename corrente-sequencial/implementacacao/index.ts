@@ -13,6 +13,16 @@ interface Handler {
     hasNextHandler: boolean;
 }
 
+type Context<T = unknown> = {
+    data: T;
+    options?: {
+        raw?: boolean;
+        touched?: boolean;
+        special: boolean;
+        valid?: boolean;
+    };
+};
+
 abstract class AbstractHandler implements Handler {
     private nextHandler: Handler | undefined;
     public get hasNextHandler(): boolean {
@@ -23,20 +33,20 @@ abstract class AbstractHandler implements Handler {
         this.nextHandler = handler;
         return handler;
     }
-    public handle(request: unknown) {
+    public handle(context: Context) {
         if (this.nextHandler) {
-            return this.nextHandler.handle(request);
+            return this.nextHandler.handle(context);
         }
         return { success: false, data: {}, message: "not processed" };
     }
 }
 
 class Base64Handler extends AbstractHandler {
-    public handle(data: unknown) {
+    public handle(context: Context) {
         try {
-            if (typeof data === "string") {
-                const r = atob(data);
-                return super.handle(r);
+            if (typeof context.data === "string") {
+                const r = atob(context.data);
+                return super.handle({ ...context, data: r });
             } else throw new Error("data not string");
         } catch (error) {
             return { success: false, data: {}, message: "invalid base64" };
@@ -45,11 +55,11 @@ class Base64Handler extends AbstractHandler {
 }
 
 class JsonHandler extends AbstractHandler {
-    public handle(data: string) {
+    public handle(context: Context<string>) {
         try {
-            const r = JSON.parse(data);
+            const r = JSON.parse(context.data);
             if (!r) return { success: false, data: {}, message: "no content" };
-            return super.handle(r);
+            return super.handle({ ...context, data: r });
         } catch (error) {
             return { success: false, data: {}, message: "invalid json" };
         }
@@ -57,9 +67,13 @@ class JsonHandler extends AbstractHandler {
 }
 
 class RootValidatorHandler extends AbstractHandler {
-    public handle(data: string) {
+    public handle(context: Context) {
         // check operation
-        if (!["UPDATE", "CREATE", "DELETE"].includes(`${data["operation"]}`)) {
+        if (
+            !["UPDATE", "CREATE", "DELETE"].includes(
+                `${context.data?.["operation"]}`,
+            )
+        ) {
             return {
                 success: false,
                 data: {},
@@ -67,24 +81,28 @@ class RootValidatorHandler extends AbstractHandler {
             };
         }
         // check source
-        if (!["mazden", "pinejot", "zordia"].includes(`${data["source"]}`)) {
+        if (
+            !["mazden", "pinejot", "zordia"].includes(
+                `${context.data?.["source"]}`,
+            )
+        ) {
             return {
                 success: false,
                 data: {},
                 message: "source discontinued",
             };
         }
-        return super.handle(data);
+        return super.handle(context);
     }
 }
 
 class DomainRulesValidatorHandler extends AbstractHandler {
-    public handle(data: string) {
+    public handle(context: Context) {
         if (
-            data["operation"] === "UPDATE" &&
-            data["options"]?.["force"] === true
+            context.data?.["operation"] === "UPDATE" &&
+            context.data?.["options"]?.["force"] === true
         ) {
-            if (data["source"] === "pinejot") {
+            if (context.data?.["source"] === "pinejot") {
                 return {
                     success: false,
                     data: {},
@@ -92,7 +110,10 @@ class DomainRulesValidatorHandler extends AbstractHandler {
                 };
             }
         }
-        if (data["data"]?.["age"] > 21 && data["data"]?.["country"] === "BRA") {
+        if (
+            context.data?.["data"]?.["age"] > 21 &&
+            context.data?.["data"]?.["country"] === "BRA"
+        ) {
             return {
                 success: false,
                 data: {},
@@ -100,8 +121,8 @@ class DomainRulesValidatorHandler extends AbstractHandler {
             };
         }
 
-        if (this.hasNextHandler) return super.handle(data);
-        else return { success: true, data: data["data"] as object };
+        if (this.hasNextHandler) return super.handle(context);
+        else return { success: true, data: context["data"] as object };
     }
 }
 
@@ -118,7 +139,8 @@ base64Handler
 const requestHandler = base64Handler;
 
 async function process(raw: unknown): Promise<Result> {
-    return requestHandler.handle(raw);
+    const context: Context = { data: raw };
+    return requestHandler.handle(context);
 }
 
 process(input).then((r) => console.log(r));
