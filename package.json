@@ -5,11 +5,18 @@
     "main": "index.js",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
-        "debug": "DEBUG=express:* tsx watch",
-        "debug-condicoes-ex": "DEBUG=express:* tsx watch ./corrente-exclusiva/exemplo/index.ts",
-        "debug-condicoes-imp": "DEBUG=express:* tsx watch ./corrente-exclusiva/implementacacao/index.ts",
         "start": "tsx watch",
-        "invoke": "curl -i -X GET 'http://localhost:3000/hello'"
+        "debug": "DEBUG=express:* tsx watch",
+        "run-exclusiva-ex": "DEBUG=express:* tsx watch ./corrente-exclusiva/exemplo/index.ts",
+        "run-exclusiva-imp": "DEBUG=express:* tsx watch ./corrente-exclusiva/implementacacao/index.ts",
+        "run-sequencial-ex": "tsx ./corrente-sequencial/exemplo/index.ts",
+        "run-sequencial-imp": "tsx ./corrente-sequencial/implementacacao/index.ts",
+        "invoke-world": "curl -i -X GET 'http://localhost:3000/hello'",
+        "invoke-person": "curl -i -X GET 'http://localhost:3000/hello?name=Michael'",
+        "invoke-undefined": "curl -i -X DELETE 'http://localhost:3000/hello'",
+        "invoke-zod": "curl -i -X GET 'http://localhost:3000/hello?name=Foo&age=42'",
+        "invoke-unknown": "curl -i -X POST 'http://localhost:3000/hello?name=foo'",
+        "invoke-blacklist": "curl -i -X GET 'http://localhost:3000/hello?name=bob'"
     },
     "keywords": [],
     "author": "",
