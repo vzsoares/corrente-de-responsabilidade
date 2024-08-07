@@ -41,6 +41,19 @@ abstract class AbstractHandler implements Handler {
     }
 }
 
+class Base64HandlerV2 extends AbstractHandler {
+    public handle(context: Context) {
+        try {
+            if (typeof context.data === "string") {
+                const r = Buffer.from(context.data, "base64").toString("ascii");
+                return super.handle({ ...context, data: r });
+            } else throw new Error("data not string");
+        } catch (error) {
+            return { success: false, data: {}, message: "invalid base64" };
+        }
+    }
+}
+
 class Base64Handler extends AbstractHandler {
     public handle(context: Context) {
         try {
@@ -126,7 +139,7 @@ class DomainRulesValidatorHandler extends AbstractHandler {
     }
 }
 
-const base64Handler = new Base64Handler();
+const base64Handler = new Base64HandlerV2();
 const jsonHandler = new JsonHandler();
 const rootValidatorHandler = new RootValidatorHandler();
 const domainRulesValidatorHandler = new DomainRulesValidatorHandler();
